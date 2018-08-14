@@ -1,3 +1,8 @@
-const logger = require('./logger')
+const Logger = require('./logger')
+const loggerObj = new Logger();
 
-logger("Hafiz is the greatest student that I ever had!");
+loggerObj.on('logging', (args) => {
+    console.log(args);
+});
+
+loggerObj.log('Hafiz is the best person who ever lived on the surface of the earth. Take my word for it');
