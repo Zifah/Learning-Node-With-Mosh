@@ -1,8 +1,8 @@
-const fs = require('fs');
+const EventEmitter = require('events');
+const emitter = new EventEmitter();
 
-fs.readdir('./', printFiles);
+emitter.on('messageLogged', function(){
+    console.log('A new message has been logged');
+})
 
-function printFiles(error, files){
-    if(error) console.log('Error', error);
-    else console.log('Result', files);
-}
+emitter.emit('messageLogged');
