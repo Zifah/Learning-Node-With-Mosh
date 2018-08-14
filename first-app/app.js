@@ -1,8 +1,16 @@
-const Logger = require('./logger')
-const loggerObj = new Logger();
+const http = require('http');
 
-loggerObj.on('logging', (args) => {
-    console.log(args);
+const server = http.createServer((req, res) => {
+    if(req.url === '/'){
+        res.write('Hello World!');
+        res.end();
+    }
+
+    if(req.url === '/api/courses'){
+        res.write(JSON.stringify([1, 2, 3]));
+        res.end();
+    }
 });
 
-loggerObj.log('Hafiz is the best person who ever lived on the surface of the earth. Take my word for it');
+server.listen(3000);
+console.log("Listening on port 3000...")
