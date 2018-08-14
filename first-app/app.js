@@ -1,3 +1,5 @@
+console.log(__filename);
+console.log(__dirname);
 const log = require('./logger');
 
 function sayHello(name){
