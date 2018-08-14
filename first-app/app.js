@@ -1,8 +1,3 @@
-const EventEmitter = require('events');
-const emitter = new EventEmitter();
+const logger = require('./logger')
 
-emitter.on('messageLogged', (arg) => {
-    console.log('A new message has been logged', arg);
-});
-
-emitter.emit('messageLogged', { id: 1, url: 'http://' });
+logger("Hafiz is the greatest student that I ever had!");
