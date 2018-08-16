@@ -1,2 +1,2 @@
 var lionLib = require('lion-lib-hafiz');
-console.log(lionLib.add(1, 2));
+console.log(lionLib.multiply(15, 12));

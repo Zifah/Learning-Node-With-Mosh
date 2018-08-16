@@ -1,6 +1,6 @@
 {
   "name": "first-app",
-  "version": "1.0.0",
+  "version": "1.1.0",
   "description": "",
   "main": "app.js",
   "scripts": {
@@ -10,6 +10,6 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
-    "lion-lib-hafiz": "^1.0.0"
+    "lion-lib-hafiz": "^1.1.0"
   }
 }
