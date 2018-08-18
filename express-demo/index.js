@@ -18,7 +18,7 @@ app.get('/api/courses', (req, res) => {
 app.get('/api/courses/:id', (req, res) => {
     var course = courses.find(c => {return c.id === parseInt(req.params.id)});
     if (course) res.send(course);
-    else res.status(404).send('Course does not exist');
+    res.status(404).send('Course does not exist');
 });
 
 app.post('/api/courses', (req, res) => {
@@ -37,6 +37,27 @@ app.post('/api/courses', (req, res) => {
         name: req.body.name
     };
     courses.push(course);
+    res.send(course);
+});
+
+app.put('/api/courses/:id', (req, res) => {    
+    var course = courses.find(c => {return c.id === parseInt(req.params.id)});
+    if (!course)  {
+        res.status(404).send('The course with the given ID was not found')
+        return;
+    };
+
+    const schema = {
+        name: Joi.string().min(3).required()
+    };
+
+    const validity = Joi.validate(req.body, schema);
+    if(validity.error){
+        res.status(400).send(validity.error.details[0].message);
+        return;
+    }
+
+    course.name = req.body.name;
     res.send(course);
 });
 
