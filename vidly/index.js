@@ -14,9 +14,18 @@ app.get('/api/genres', (req, res) => {
 });
 
 app.get('/api/genres/:id', (req, res) => {
-    const course = genres.find(c => c.id === parseInt(req.params.id));
-    if(!course) return res.status(404).send(`A course with id ${req.params.id} was not found!`);
-    res.send(course);
+    const genre = genres.find(c => c.id === parseInt(req.params.id));
+    if(!genre) return res.status(404).send(`A genre with id ${req.params.id} was not found!`);
+    res.send(genre);
+});
+
+
+app.delete('/api/genres/:id', (req, res) => {
+    const genre = genres.find(c => c.id === parseInt(req.params.id));
+    if(!genre) return res.status(404).send(`A genre with id ${req.params.id} was not found!`);
+    const index = genres.indexOf(genre);
+    genres.splice(index, 1);
+    res.send(genre);
 });
 
 const port = process.env.PORT_NUMBER || 3000;
