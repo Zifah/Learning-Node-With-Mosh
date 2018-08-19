@@ -19,12 +19,28 @@ app.get('/api/genres/:id', (req, res) => {
     res.send(genre);
 });
 
-
 app.delete('/api/genres/:id', (req, res) => {
     const genre = genres.find(c => c.id === parseInt(req.params.id));
     if(!genre) return res.status(404).send(`A genre with id ${req.params.id} was not found!`);
     const index = genres.indexOf(genre);
     genres.splice(index, 1);
+    res.send(genre);
+});
+
+app.put('/api/genres/:id', (req, res) => {
+    const genre = genres.find(c => c.id === parseInt(req.params.id));
+    if(!genre) return res.status(404).send(`A genre with id ${req.params.id} was not found!`);
+    
+    const { error } = validateGenre(req.body);
+    if(error) return res.status(400).send(error.details[0].message);
+
+    if(genres.find(g => g.name.toLowerCase() === req.body.name.toLowerCase())) {
+        return res.status(400).send('Another genre with this name already exists');
+    }
+
+    genre.name = req.body.name || genre.name;
+    genre.description = req.body.description || genre.description;
+    console.log(`Genre ${req.params.id} updated successfully`);
     res.send(genre);
 });
 
