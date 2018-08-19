@@ -28,5 +28,31 @@ app.delete('/api/genres/:id', (req, res) => {
     res.send(genre);
 });
 
+app.post('/api/genres', (req, res) => {
+    const { error } = validateGenre(req.body);
+    if(error) return res.status(400).send(error.details[0].message);
+
+    if(genres.find(g => g.name.toLowerCase() === req.body.name.toLowerCase())) {
+        return res.status(400).send('Another genre with this name already exists');
+    }
+
+    const genre = {
+        id: genres.length + 1,
+        name: req.body.name,
+        description: req.body.description
+    };
+    genres.push(genre);
+    res.send(genre);
+});
+
+function validateGenre(genre){
+    const schema = {
+        name: Joi.string().min(3).required(),
+        description: Joi.string()
+    }
+
+    return Joi.validate(genre, schema);
+}
+
 const port = process.env.PORT_NUMBER || 3000;
 app.listen(port, () => console.log('Listening on port', port, '...'));
