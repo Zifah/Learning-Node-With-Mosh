@@ -15,9 +15,7 @@ app.get('/api/genres', (req, res) => {
 
 app.get('/api/genres/:id', (req, res) => {
     const course = genres.find(c => c.id === parseInt(req.params.id));
-
-    if(!course) return res.status(404).send(`A course with id ${req.params.id} was not found!`)
-
+    if(!course) return res.status(404).send(`A course with id ${req.params.id} was not found!`);
     res.send(course);
 });
 
