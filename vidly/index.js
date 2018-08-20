@@ -1,8 +1,13 @@
 const Joi = require('joi');
 const express = require('express');
+const logger = require('./logger');
+const authentication = require('./authentication');
 
 const app = express();
 app.use(express.json());
+
+app.use(logger);
+app.use(authentication);
 
 const genres = [ 
     { id: 1, name: 'Thriller', description: 'Movies that increase the heart rate'}, 
