@@ -1,10 +1,14 @@
 const Joi = require('joi');
 const express = require('express');
 const app = express();
+const helmet = require('helmet');
+const morgan = require('morgan');
 
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(express.static('public'));
+app.use(helmet());
+app.use(morgan('tiny'));
 
 const courses = [{ id: 1, name: 'Mathematics' }, { id: 2, name: 'English' }, 
 { id: 3, name: 'Yoruba' }];
