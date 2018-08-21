@@ -1,6 +1,6 @@
 const Joi = require('joi');
 const express = require('express');
-const logger = require('./logger');
+const logger = require('./middleware/logger');
 const authentication = require('./authentication');
 
 const app = express();
