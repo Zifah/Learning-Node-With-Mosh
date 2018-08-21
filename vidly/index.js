@@ -1,7 +1,7 @@
 const Joi = require('joi');
 const express = require('express');
 const logger = require('./middleware/logger');
-const authentication = require('./authentication');
+const authentication = require('./middleware/authentication');
 
 const app = express();
 app.use(express.json());
