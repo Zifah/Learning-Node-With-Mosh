@@ -1,7 +1,11 @@
 console.log('Before');
-
-setTimeout(() => {
-    console.log('Reading a user from a database...');
-}, 2000);
-
+const user = getUser(1);
+console.log(user);
 console.log('After');
+
+function getUser(id){
+    setTimeout(() => {
+        console.log('Reading a user from a database...');
+        return { id: id, gitHuibUsername: 'Zifah'}
+    }, 2000);
+}
