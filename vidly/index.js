@@ -5,7 +5,7 @@ const authentication = require('./middleware/authentication');
 const app = express();
 const genres = require('./routes/genres')
 app.use(express.json());
-app.use(express.urlencoded());
+app.use(express.urlencoded({ extended: true }));
 
 app.use(logger);
 app.use(authentication);
