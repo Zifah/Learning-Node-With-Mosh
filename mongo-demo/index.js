@@ -15,7 +15,6 @@ const courseSchema = new mongoose.Schema({
 
 const Course = mongoose.model('Course', courseSchema);
 
-
 async function createCourse() {
     const course = new Course({
         name: 'Angular Course',
@@ -28,4 +27,9 @@ async function createCourse() {
     console.log(result);
 }
 
-createCourse();
+async function getCourses(){
+    var courses = await Course.find();
+    console.log(courses);
+}
+
+getCourses();
