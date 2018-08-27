@@ -28,7 +28,10 @@ async function createCourse() {
 }
 
 async function getCourses(){
-    var courses = await Course.find();
+    var courses = await Course.find({
+        name: 'Angular Course',
+        isPublished: true
+    });
     console.log(courses);
 }
 
