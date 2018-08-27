@@ -30,8 +30,9 @@ async function createCourse() {
 async function getCourses(){
     var courses = await Course
     .find()
-    .or([
-        { author: 'Mosh Hamedani' },
+    .and([
+        { author: /^Mosh/ },
+        { author: /Hamedani$/ },
         { isPublished: true }
     ])
     .limit(10)
