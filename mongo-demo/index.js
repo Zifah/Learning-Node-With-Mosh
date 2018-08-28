@@ -55,4 +55,15 @@ async function updateCourseQueryFirst(id){
     console.log(result);
 }
 
-updateCourseQueryFirst('5b842c7fc6870e52bcbec8c1');
+async function updateCourse(id){
+    const result = await Course.update({ _id: id }, {
+        $set: {
+            author: 'Mosh',
+            isPublished: true
+        }
+    });
+
+    console.log(result);
+}
+
+updateCourse('5b842c7fc6870e52bcbec8c0');
