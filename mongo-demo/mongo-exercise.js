@@ -22,8 +22,11 @@ async function getCourses() {
             isPublished: true
         })
         .or([
-            {tags: 'frontend'},
-            {tags: 'backend'}
+            {
+                price: {
+                    $gte: 15
+                }
+            }, { name: /by/i }
         ])
         .sort('-price')
         .select(['name', 'author', 'price']);
