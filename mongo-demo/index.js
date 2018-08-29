@@ -7,20 +7,33 @@ mongoose
 
 const courseSchema = new mongoose.Schema({
     name: { type: String, required: true },
+    category: {
+        type: String,
+        required: true,
+        enum: ['web', 'mobile', 'offline']
+    },
     author: String,
     tags: [String],
     date: { type: Date, default: Date.now },
-    isPublished: Boolean
+    isPublished: Boolean,
+    price: {
+        type: Number,
+        required: function(){
+            return this.isPublished;
+        }
+    }
 });
 
 const Course = mongoose.model('Course', courseSchema);
 
 async function createCourse() {
     const course = new Course({
-        // name: 'ReactJs Course',
+        name: 'ReactJs Course',
         author: 'Mosh Hamedani',
+        category: '-',
         tags: ['angular', 'frontend'],
-        isPublished: false
+        isPublished: true,
+        price: 15
     });
 
     try{
