@@ -3,7 +3,7 @@ const mongoose = require('mongoose');
 mongoose
     .connect('mongodb://localhost/playground', { useNewUrlParser: true })
     .then(() => console.log('Connected to MongoDB...'))
-    .catch(err => console.log('Could not connect to MongoDB...', e));
+    .catch(err => console.log('Could not connect to MongoDB...', err));
 
 const courseSchema = new mongoose.Schema({
     name: { type: String, required: true },
@@ -16,8 +16,12 @@ const courseSchema = new mongoose.Schema({
     tags: {
         type: Array,
         validate: {
-            validator: function(value){
-                return value && value.length > 0;
+            isAsync: true,
+            validator: function(value, callback){
+                setTimeout(() => {
+                    const isValid = value && value.length > 0;
+                    callback(isValid);
+                }, 4000);
             },
             message: 'A course should have at least, one tag.'
         }
