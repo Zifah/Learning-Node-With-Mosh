@@ -17,7 +17,7 @@ const courseSchema = new mongoose.Schema({
         type: Array,
         validate: {
             isAsync: true,
-            validator: function(value, callback){
+            validator: function (value, callback) {
                 setTimeout(() => {
                     const isValid = value && value.length > 0;
                     callback(isValid);
@@ -30,7 +30,7 @@ const courseSchema = new mongoose.Schema({
     isPublished: Boolean,
     price: {
         type: Number,
-        required: function(){
+        required: function () {
             return this.isPublished;
         }
     }
@@ -42,50 +42,51 @@ async function createCourse() {
     const course = new Course({
         name: 'Machine Learning Course',
         author: 'Hafiz Adewuyi',
-        category: 'web',
+        category: '-',
         tags: null,
         isPublished: true,
         price: 15
     });
 
-    try{
+    try {
         const result = await course.save();
         console.log(result);
-    } catch(err){
-        console.log(err.message)
+    } catch (ex) {
+        for (field in ex.errors)
+            console.log(ex.errors[field].message);
     }
 }
 
-async function getCourses(){
+async function getCourses() {
     var courses = await Course
-    .find()
-    .and([
-        { author: /^Mosh/ },
-        { author: /Hamedani$/ },
-        { isPublished: true }
-    ])
-    .limit(10)
-    .sort({ name: 1 })
-    .countDocuments();
+        .find()
+        .and([
+            { author: /^Mosh/ },
+            { author: /Hamedani$/ },
+            { isPublished: true }
+        ])
+        .limit(10)
+        .sort({ name: 1 })
+        .countDocuments();
     console.log(courses);
 }
 
-async function updateCourseQueryFirst(id){
+async function updateCourseQueryFirst(id) {
     const course = await Course.findById(id);
 
-    if(!course){
+    if (!course) {
         console.log('Did not find a course with id: ', id);
         return;
     }
 
     course.isPublished = false,
-    course.author = 'Another Author';
+        course.author = 'Another Author';
     const result = await course.save();
     console.log(result);
 }
 
-async function updateCourse(id){
-    const result = await Course.findByIdAndUpdate(id , {
+async function updateCourse(id) {
+    const result = await Course.findByIdAndUpdate(id, {
         $set: {
             author: 'Jason',
             isPublished: true
@@ -95,7 +96,7 @@ async function updateCourse(id){
     console.log(result);
 }
 
-async function removeCourse(id){
+async function removeCourse(id) {
     const deleted = await Course.findByIdAndRemove(id);
     console.log('Deleted course:', deleted);
 }
