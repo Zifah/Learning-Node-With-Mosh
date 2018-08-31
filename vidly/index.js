@@ -9,7 +9,7 @@ app.use(express.urlencoded({ extended: true }));
 
 app.use(logger);
 app.use(authentication);
-app.use('/api/genres', genres);
+app.use('/api/genres', genres.router);
 
 const port = process.env.PORT_NUMBER || 3000;
 app.listen(port, () => console.log('Listening on port', port, '...'));
