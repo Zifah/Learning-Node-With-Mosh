@@ -48,9 +48,9 @@ async function createGenre(genre) {
 }
 
 router.get('/', async (req, res) => {
-    console.log('About to get all genres')
-    const genres = await getGenres();
-    res.send(genres);
+    getGenres()
+        .then(genres => res.send(genres))
+        .catch(err => console.log('Could not get genres: ', err.message));
 });
 
 router.get('/:id', async (req, res) => {
@@ -59,19 +59,26 @@ router.get('/:id', async (req, res) => {
         if (!genre) return res.status(404).send(`A genre with id ${req.params.id} was not found!`);
         res.send(genre);
     } catch (ex) {
-        const friendlyMessage = `Error fetching genre with id: ${req.params.id}`;
-        console.log(friendlyMessage, ex.message);
-        res.status(500).send(friendlyMessage);
+        logServerErrorAndRespond(err, `Error fetching genre with id: ${req.params.id}`, res);
     }
 });
 
 router.delete('/:id', (req, res) => {
-    const genre = genres.find(c => c.id === parseInt(req.params.id));
-    if (!genre) return res.status(404).send(`A genre with id ${req.params.id} was not found!`);
-    const index = genres.indexOf(genre);
-    genres.splice(index, 1);
-    res.send(genre);
+    Genres
+        .findByIdAndRemove(req.params.id)
+        .then(genre => {
+            if(!genre) return res.status(404).send(`A genre with id ${req.params.id} was not found!`);
+            res.send(genre);
+        })
+        .catch(err => {
+            logServerErrorAndRespond(err, `Error trying to delete genre with id: ${req.params.id}`, res);
+        });
 });
+
+function logServerErrorAndRespond(err, friendlyMessage, res, statusCode = 500) {
+    console.log(friendlyMessage, err.message);
+    res.status(statusCode).send(friendlyMessage);
+}
 
 router.put('/:id', (req, res) => {
     const genre = genres.find(c => c.id === parseInt(req.params.id));
