@@ -33,11 +33,6 @@ function getGenresModel() {
 
 const Genres = getGenresModel();
 
-const genres = [
-    { id: 1, name: 'Thriller', description: 'Movies that increase the heart rate' },
-    { id: 2, name: 'Rom-Com', description: 'Movies that will make your eyes well up with tears' }
-];
-
 async function getGenres() {
     return await Genres.find(); l
 }
@@ -67,7 +62,7 @@ router.delete('/:id', (req, res) => {
     Genres
         .findByIdAndRemove(req.params.id)
         .then(genre => {
-            if(!genre) return res.status(404).send(`A genre with id ${req.params.id} was not found!`);
+            if (!genre) return res.status(404).send(`A genre with id ${req.params.id} was not found!`);
             res.send(genre);
         })
         .catch(err => {
@@ -101,17 +96,23 @@ router.post('/', (req, res) => {
     const { error } = validateGenre(req.body);
     if (error) return res.status(400).send(error.details[0].message);
 
-    if (genres.find(g => g.name.toLowerCase() === req.body.name.toLowerCase())) {
-        return res.status(400).send('Another genre with this name already exists');
-    }
+    Genres
+        .find({ name: req.body.name })
+        .then(matchedGenre => {
+            console.log(matchedGenre);
+            if (matchedGenre && matchedGenre.length > 0) return res.status(400).send('Another genre with this name already exists');
 
-    const genre = {
-        id: genres.length + 1,
-        name: req.body.name,
-        description: req.body.description
-    };
-    genres.push(genre);
-    res.send(genre);
+            createGenre(req.body)
+                .then(newGenre => {
+                    res.send(newGenre);
+                })
+                .catch(err => {
+                    logServerErrorAndRespond(err, `Error trying to create genre`, res);
+                });
+        })
+        .catch(err => {
+            logServerErrorAndRespond(err, `Error trying to create genre`, res);
+        });
 });
 
 function validateGenre(genre) {
