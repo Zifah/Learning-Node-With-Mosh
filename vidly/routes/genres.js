@@ -42,6 +42,13 @@ async function createGenre(genre) {
     return await genreModel.save();
 }
 
+async function updateGenre(id, updateObject) {
+    return await Genres
+        .findByIdAndUpdate(id, {
+            $set: updateObject
+        }, { new: true });
+}
+
 router.get('/', async (req, res) => {
     getGenres()
         .then(genres => res.send(genres))
@@ -76,20 +83,29 @@ function logServerErrorAndRespond(err, friendlyMessage, res, statusCode = 500) {
 }
 
 router.put('/:id', (req, res) => {
-    const genre = genres.find(c => c.id === parseInt(req.params.id));
-    if (!genre) return res.status(404).send(`A genre with id ${req.params.id} was not found!`);
-
     const { error } = validateGenre(req.body);
     if (error) return res.status(400).send(error.details[0].message);
 
-    if (genres.find(g => g.name.toLowerCase() === req.body.name.toLowerCase())) {
-        return res.status(400).send('Another genre with this name already exists');
-    }
+    Genres
+        .find({ name: req.body.name })
+        .then(matchedGenre => {
+            if (matchedGenre && matchedGenre.length > 0 && matchedGenre[0]._id != req.params.id)
+                return res.status(400).send('Another genre with this name already exists');
 
-    genre.name = req.body.name || genre.name;
-    genre.description = req.body.description || genre.description;
+            updateGenre(req.params.id, req.body)
+                .then(updated => {
+                    if (!updated) return res.status(404).send(`A genre with id ${req.params.id} was not found!`);
+                    res.send(updated);
+                })
+                .catch(err => {
+                    logServerErrorAndRespond(err, `Error trying to update genre with id: ${req.params.id}`, res);
+                });
+        })
+        .catch(err => {
+            logServerErrorAndRespond(err, `Error trying to update genre`, res);
+        });
+
     console.log(`Genre ${req.params.id} updated successfully`);
-    res.send(genre);
 });
 
 router.post('/', (req, res) => {
@@ -99,7 +115,6 @@ router.post('/', (req, res) => {
     Genres
         .find({ name: req.body.name })
         .then(matchedGenre => {
-            console.log(matchedGenre);
             if (matchedGenre && matchedGenre.length > 0) return res.status(400).send('Another genre with this name already exists');
 
             createGenre(req.body)
