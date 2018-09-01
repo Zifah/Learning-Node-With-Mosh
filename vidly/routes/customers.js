@@ -1,29 +1,6 @@
 const express = require('express');
 const router = express.Router();
-const Joi = require('joi');
-const mongoose = require('mongoose');
-
-function getCustomersModel() {
-    return mongoose.model('Customer', new mongoose.Schema({
-        isGold: {
-            type: Boolean,
-            default: false
-        },
-        name: {
-            type: String,
-            required: true,
-            minlength: 3,
-            maxlength: 100,
-            trim: true
-        },
-        phone: {
-            type: String,
-            validate: /^\d{6,16}$/
-        }
-    }));
-}
-
-const Customer = getCustomersModel();
+const { Customer, validate } = require('../models/customer');
 
 async function getCustomers() {
     return await Customer.find().sort('name'); l
@@ -74,7 +51,7 @@ function logServerErrorAndRespond(err, friendlyMessage, res, statusCode = 500) {
 }
 
 router.put('/:id', (req, res) => {
-    const { error } = validateCustomer(req.body);
+    const { error } = validate(req.body);
     if (error) return res.status(400).send(error.details[0].message);
 
     Customer
@@ -100,7 +77,7 @@ router.put('/:id', (req, res) => {
 });
 
 router.post('/', (req, res) => {
-    const { error } = validateCustomer(req.body);
+    const { error } = validate(req.body);
     if (error) return res.status(400).send(error.details[0].message);
 
     Customer
@@ -120,16 +97,6 @@ router.post('/', (req, res) => {
             logServerErrorAndRespond(err, `Error trying to create customer`, res);
         });
 });
-
-function validateCustomer(customer) {
-    const schema = {
-        name: Joi.string().min(3).required(),
-        phone: Joi.string(),
-        isGold: Joi.boolean()
-    }
-
-    return Joi.validate(customer, schema);
-}
 
 module.exports = {
     router: router,
