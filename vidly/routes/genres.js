@@ -36,7 +36,7 @@ function getGenresModel() {
 const Genres = getGenresModel();
 
 async function getGenres() {
-    return await Genres.find(); l
+    return await Genres.find().sort('name'); l
 }
 
 async function createGenre(genre) {
