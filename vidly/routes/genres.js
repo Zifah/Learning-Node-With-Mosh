@@ -54,7 +54,7 @@ async function updateGenre(id, updateObject) {
 router.get('/', async (req, res) => {
     getGenres()
         .then(genres => res.send(genres))
-        .catch(err => console.log('Could not get genres: ', err.message));
+        .catch(err => logServerErrorAndRespond(err, `Could not get all genres`, res));
 });
 
 router.get('/:id', async (req, res) => {
