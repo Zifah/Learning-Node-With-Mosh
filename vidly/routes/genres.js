@@ -18,13 +18,15 @@ function getGenresModel() {
             type: String,
             required: true,
             minlength: 3,
-            maxlength: 50
+            maxlength: 50,
+            trim: true
         },
         description: {
             type: String,
             required: false,
             minlength: 10,
-            maxlength: 250
+            maxlength: 250,
+            trim: true
         }
     });
 
