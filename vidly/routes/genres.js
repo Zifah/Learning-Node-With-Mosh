@@ -1,30 +1,6 @@
 const express = require('express');
 const router = express.Router();
-const Joi = require('joi');
-const mongoose = require('mongoose');
-
-function getGenresModel() {
-    const genreSchema = new mongoose.Schema({
-        name: {
-            type: String,
-            required: true,
-            minlength: 3,
-            maxlength: 50,
-            trim: true
-        },
-        description: {
-            type: String,
-            required: false,
-            minlength: 10,
-            maxlength: 250,
-            trim: true
-        }
-    });
-
-    return mongoose.model('Genres', genreSchema);
-}
-
-const Genres = getGenresModel();
+const { Genres, validate  } = require('../models/genre'); 
 
 async function getGenres() {
     return await Genres.find().sort('name'); l
@@ -76,7 +52,7 @@ function logServerErrorAndRespond(err, friendlyMessage, res, statusCode = 500) {
 }
 
 router.put('/:id', (req, res) => {
-    const { error } = validateGenre(req.body);
+    const { error } = validate(req.body);
     if (error) return res.status(400).send(error.details[0].message);
 
     Genres
@@ -102,7 +78,7 @@ router.put('/:id', (req, res) => {
 });
 
 router.post('/', (req, res) => {
-    const { error } = validateGenre(req.body);
+    const { error } = validate(req.body);
     if (error) return res.status(400).send(error.details[0].message);
 
     Genres
@@ -122,15 +98,6 @@ router.post('/', (req, res) => {
             logServerErrorAndRespond(err, `Error trying to create genre`, res);
         });
 });
-
-function validateGenre(genre) {
-    const schema = {
-        name: Joi.string().min(3).required(),
-        description: Joi.string()
-    }
-
-    return Joi.validate(genre, schema);
-}
 
 module.exports = {
     router: router,
