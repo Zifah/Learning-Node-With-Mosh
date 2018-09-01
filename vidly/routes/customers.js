@@ -1,0 +1,138 @@
+const express = require('express');
+const router = express.Router();
+const Joi = require('joi');
+const mongoose = require('mongoose');
+
+function getCustomersModel() {
+    return mongoose.model('Customer', new mongoose.Schema({
+        isGold: {
+            type: Boolean,
+            default: false
+        },
+        name: {
+            type: String,
+            required: true,
+            minlength: 3,
+            maxlength: 100,
+            trim: true
+        },
+        phone: {
+            type: String,
+            validate: /^\d{6,16}$/
+        }
+    }));
+}
+
+const Customer = getCustomersModel();
+
+async function getCustomers() {
+    return await Customer.find().sort('name'); l
+}
+
+async function createCustomer(customer) {
+    return await new Customer(customer).save();
+}
+
+async function updateCustomer(id, updateObject) {
+    return await Customer
+        .findByIdAndUpdate(id, {
+            $set: updateObject
+        }, { new: true });
+}
+
+router.get('/', async (req, res) => {
+    getCustomers()
+        .then(Customer => res.send(Customer))
+        .catch(err => logServerErrorAndRespond(err, `Could not get all Customers`, res));
+});
+
+router.get('/:id', async (req, res) => {
+    try {
+        const customer = await Customer.findById(req.params.id);
+        if (!customer) return res.status(404).send(`A customer with id ${req.params.id} was not found!`);
+        res.send(customer);
+    } catch (ex) {
+        logServerErrorAndRespond(err, `Error fetching customer with id: ${req.params.id}`, res);
+    }
+});
+
+router.delete('/:id', (req, res) => {
+    Customer
+        .findByIdAndRemove(req.params.id)
+        .then(customer => {
+            if (!customer) return res.status(404).send(`A customer with id ${req.params.id} was not found!`);
+            res.send(customer);
+        })
+        .catch(err => {
+            logServerErrorAndRespond(err, `Error trying to delete customer with id: ${req.params.id}`, res);
+        });
+});
+
+function logServerErrorAndRespond(err, friendlyMessage, res, statusCode = 500) {
+    console.log(friendlyMessage, err.message);
+    res.status(statusCode).send(friendlyMessage);
+}
+
+router.put('/:id', (req, res) => {
+    const { error } = validateCustomer(req.body);
+    if (error) return res.status(400).send(error.details[0].message);
+
+    Customer
+        .find({ name: req.body.name })
+        .then(matchedCustomer => {
+            if (matchedCustomer && matchedCustomer.length > 0 && matchedCustomer[0]._id != req.params.id)
+                return res.status(400).send('Another customer with this name already exists');
+
+            updateCustomer(req.params.id, req.body)
+                .then(updated => {
+                    if (!updated) return res.status(404).send(`A customer with id ${req.params.id} was not found!`);
+                    res.send(updated);
+                })
+                .catch(err => {
+                    logServerErrorAndRespond(err, `Error trying to update customer with id: ${req.params.id}`, res);
+                });
+        })
+        .catch(err => {
+            logServerErrorAndRespond(err, `Error trying to update customer`, res);
+        });
+
+    console.log(`Customer ${req.params.id} updated successfully`);
+});
+
+router.post('/', (req, res) => {
+    const { error } = validateCustomer(req.body);
+    if (error) return res.status(400).send(error.details[0].message);
+
+    Customer
+        .find({ name: req.body.name })
+        .then(matchedCustomer => {
+            if (matchedCustomer && matchedCustomer.length > 0) return res.status(400).send('Another customer with this name already exists');
+
+            createCustomer(req.body)
+                .then(newCustomer => {
+                    res.send(newCustomer);
+                })
+                .catch(err => {
+                    logServerErrorAndRespond(err, `Error trying to create customer`, res);
+                });
+        })
+        .catch(err => {
+            logServerErrorAndRespond(err, `Error trying to create customer`, res);
+        });
+});
+
+function validateCustomer(customer) {
+    const schema = {
+        name: Joi.string().min(3).required(),
+        phone: Joi.string(),
+        isGold: Joi.boolean()
+    }
+
+    return Joi.validate(customer, schema);
+}
+
+module.exports = {
+    router: router,
+    database: {
+    }
+};
