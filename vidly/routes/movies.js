@@ -8,20 +8,38 @@ async function getMovies() {
 }
 
 async function createMovie(movie) {
+    var theGenre = await genres.database.getById(movie.genreId);
+
+    if (!theGenre) {
+        throw new Error('Invalid genre');
+    }
+
     return await new Movie({
         title: movie.title,
-        genre: await genres.database.getById(movie.genreId),
+        genre: {
+            _id: theGenre._id,
+            name: theGenre.name
+        },
         numberInStock: movie.numberInStock,
         dailyRentalRate: movie.dailyRentalRate
     }).save();
 }
 
 async function updateMovie(id, updateObject) {
+    var theGenre = await genres.database.getById(updateObject.genreId);
+
+    if (!theGenre) {
+        throw new Error('Invalid genre');
+    }
+
     return await Movie
         .findByIdAndUpdate(id, {
             $set: {
                 title: updateObject.title,
-                genre: await genres.database.getById(updateObject.genreId),
+                genre: {
+                    _id: theGenre._id,
+                    name: theGenre.name
+                },
                 numberInStock: updateObject.numberInStock,
                 dailyRentalRate: updateObject.dailyRentalRate
             }
@@ -58,7 +76,7 @@ router.delete('/:id', (req, res) => {
 
 function logServerErrorAndRespond(err, friendlyMessage, res, statusCode = 500) {
     console.log(friendlyMessage, err.message);
-    res.status(statusCode).send(friendlyMessage);
+    res.status(statusCode).send(`${friendlyMessage}: ${err.message}`);
 }
 
 router.put('/:id', (req, res) => {
