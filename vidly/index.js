@@ -6,6 +6,7 @@ const mongoose = require('mongoose')
 const app = express();
 const genres = require('./routes/genres');
 const customers = require('./routes/customers');
+const movies = require('./routes/movies');
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
@@ -13,6 +14,7 @@ app.use(logger);
 app.use(authentication);
 app.use('/api/genres', genres.router);
 app.use('/api/customers', customers.router);
+app.use('/api/movies', movies.router);
 
 function connectToDatabase() {
     mongoose

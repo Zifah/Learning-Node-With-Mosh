@@ -6,6 +6,10 @@ async function getGenres() {
     return await Genres.find().sort('name'); l
 }
 
+async function getGenreById(id) {
+    return await Genres.findById(id);
+}
+
 async function createGenre(genre) {
     const genreModel = new Genres(genre);
     return await genreModel.save();
@@ -102,6 +106,7 @@ router.post('/', (req, res) => {
 module.exports = {
     router: router,
     database: {
-        createGenre: createGenre
+        createGenre: createGenre,
+        getById: getGenreById
     }
 };
