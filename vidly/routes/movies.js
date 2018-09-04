@@ -4,7 +4,7 @@ const { Movie, validate } = require('../models/movie');
 const genres = require('./genres')
 
 async function getMovies() {
-    return await Movie.find().sort('name'); l
+    return await Movie.find().sort('title'); l
 }
 
 async function createMovie(movie) {
@@ -66,10 +66,10 @@ router.put('/:id', (req, res) => {
     if (error) return res.status(400).send(error.details[0].message);
 
     Movie
-        .find({ name: req.body.name })
+        .find({ title: req.body.title })
         .then(matchedMovie => {
             if (matchedMovie && matchedMovie.length > 0 && matchedMovie[0]._id != req.params.id)
-                return res.status(400).send('Another movie with this name already exists');
+                return res.status(400).send('Another movie with this title already exists');
 
             updateMovie(req.params.id, req.body)
                 .then(updated => {
@@ -92,9 +92,9 @@ router.post('/', (req, res) => {
     if (error) return res.status(400).send(error.details[0].message);
 
     Movie
-        .find({ name: req.body.name })
+        .find({ title: req.body.title })
         .then(matchedMovie => {
-            if (matchedMovie && matchedMovie.length > 0) return res.status(400).send('Another movie with this name already exists');
+            if (matchedMovie && matchedMovie.length > 0) return res.status(400).send('Another movie with this title already exists');
 
             createMovie(req.body)
                 .then(newMovie => {
