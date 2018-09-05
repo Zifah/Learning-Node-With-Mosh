@@ -47,7 +47,7 @@ async function createRental(rental) {
       return previousValue + currentValue;
     });
 
-  const newRentals = await new Rental({
+  const newRental = await new Rental({
     movies: moviesToSave,
     customer: {
       _id: theCustomer._id,
@@ -62,7 +62,7 @@ async function createRental(rental) {
     await theMovies[i].save();
   }
 
-  return newRentals;
+  return newRental;
 }
 
 async function updateRental(id, updateObject) {
