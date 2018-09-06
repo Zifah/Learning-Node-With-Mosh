@@ -57,9 +57,17 @@ router.post("/", (req, res) => {
   const { error } = validate(req.body);
   if (error) return res.status(400).send(error.details[0].message);
 
-  createUser(req.body)
-    .then(newUser => {
-      res.send(newUser);
+  User.findOne({ email: req.body.email })
+    .then(user => {
+      if (user) return res.status(400).send("User already registered.");
+
+      createUser(req.body)
+        .then(newUser => {
+          res.send(newUser);
+        })
+        .catch(err => {
+          logServerErrorAndRespond(err, `Error trying to create user`, res);
+        });
     })
     .catch(err => {
       logServerErrorAndRespond(err, `Error trying to create user`, res);
