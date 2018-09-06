@@ -2,6 +2,12 @@ const express = require("express");
 const logger = require("./middleware/logger");
 const authentication = require("./middleware/authentication");
 const mongoose = require("mongoose");
+const config = require("config");
+
+if (!config.get("jwtPrivateKey")) {
+  console.error("FATAL ERROR: jwtPrivateKey is not defined");
+  process.exit(1);
+}
 
 const Joi = require("joi");
 Joi.objectId = require("joi-objectid")(Joi);
