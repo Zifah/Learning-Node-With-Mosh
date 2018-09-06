@@ -1,6 +1,7 @@
 const express = require("express");
 const router = express.Router();
 const { User, validate } = require("../models/user");
+const _ = require("lodash");
 
 async function getUsers() {
   return await User.find().sort("title");
@@ -63,7 +64,7 @@ router.post("/", (req, res) => {
 
       createUser(req.body)
         .then(newUser => {
-          res.send(newUser);
+          res.send(_.pick(newUser, ["name", "email"]));
         })
         .catch(err => {
           logServerErrorAndRespond(err, `Error trying to create user`, res);
