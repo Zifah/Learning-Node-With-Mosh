@@ -83,30 +83,6 @@ async function createRental(rental) {
   return rentalToSave;
 }
 
-async function updateRental(id, updateObject) {
-  var theGenre = await genres.database.getById(updateObject.genreId);
-
-  if (!theGenre) {
-    throw new Error("Invalid genre");
-  }
-
-  return await Rental.findByIdAndUpdate(
-    id,
-    {
-      $set: {
-        title: updateObject.title,
-        genre: {
-          _id: theGenre._id,
-          name: theGenre.name
-        },
-        numberInStock: updateObject.numberInStock,
-        dailyRentalRate: updateObject.dailyRentalRate
-      }
-    },
-    { new: true }
-  );
-}
-
 router.get("/", async (req, res) => {
   getRentals()
     .then(Rental => res.send(Rental))
@@ -150,34 +126,6 @@ router.delete("/:id", (req, res) => {
     });
 });
 
-function logServerErrorAndRespond(err, friendlyMessage, res, statusCode = 500) {
-  console.log(friendlyMessage, err);
-  res.status(statusCode).send(`${friendlyMessage}: ${err.message}`);
-}
-
-router.put("/:id", (req, res) => {
-  const { error } = validate(req.body);
-  if (error) return res.status(400).send(error.details[0].message);
-
-  updateRental(req.params.id, req.body)
-    .then(updated => {
-      if (!updated)
-        return res
-          .status(404)
-          .send(`A rental with id ${req.params.id} was not found!`);
-      res.send(updated);
-    })
-    .catch(err => {
-      logServerErrorAndRespond(
-        err,
-        `Error trying to update rental with id: ${req.params.id}`,
-        res
-      );
-    });
-
-  console.log(`Rental ${req.params.id} updated successfully`);
-});
-
 router.post("/", (req, res) => {
   const { error } = validate(req.body);
   if (error) return res.status(400).send(error.details[0].message);
@@ -190,6 +138,11 @@ router.post("/", (req, res) => {
       logServerErrorAndRespond(err, `Error trying to create rental`, res);
     });
 });
+
+function logServerErrorAndRespond(err, friendlyMessage, res, statusCode = 500) {
+  console.log(friendlyMessage, err);
+  res.status(statusCode).send(`${friendlyMessage}: ${err.message}`);
+}
 
 module.exports = {
   router: router,
