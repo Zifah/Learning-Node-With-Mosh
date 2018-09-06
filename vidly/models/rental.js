@@ -1,4 +1,5 @@
 const Joi = require("joi");
+Joi.objectId = require("joi-objectid")(Joi);
 const mongoose = require("mongoose");
 const { movieSchema } = require("./movie");
 const { customerSchema } = require("./customer");
@@ -50,10 +51,10 @@ const Rentals = getRentalsModel();
 function validateRental(rental) {
   const schema = {
     movies: Joi.array()
-      .items(Joi.string())
+      .items(Joi.objectId())
       .min(1)
       .required(),
-    customerId: Joi.string().required(),
+    customerId: Joi.objectId().required(),
     days: Joi.number().required()
   };
 
