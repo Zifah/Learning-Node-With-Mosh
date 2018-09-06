@@ -14,6 +14,7 @@
     "fawn": "^2.1.5",
     "joi": "^13.6.0",
     "joi-objectid": "^2.0.0",
+    "joi-password-complexity": "^2.0.1",
     "lodash": "^4.17.10",
     "mongoose": "^5.2.12"
   }
