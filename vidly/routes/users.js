@@ -8,7 +8,7 @@ async function getUsers() {
 }
 
 async function createUser(user) {
-  return await new User(user).save();
+  return await new User(_.pick(user, ["name", "email", "password"])).save();
 }
 
 router.get("/", async (req, res) => {
@@ -64,7 +64,7 @@ router.post("/", (req, res) => {
 
       createUser(req.body)
         .then(newUser => {
-          res.send(_.pick(newUser, ["name", "email"]));
+          res.send(_.pick(newUser, ["_id", "name", "email"]));
         })
         .catch(err => {
           logServerErrorAndRespond(err, `Error trying to create user`, res);
