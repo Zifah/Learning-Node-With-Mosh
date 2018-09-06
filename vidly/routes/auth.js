@@ -37,7 +37,7 @@ router.post("/", (req, res) => {
         .then(isValid => {
           return isValid
             ? res.send(_.pick(user, ["id", "name", "email"]))
-            : res.status(401).send("Authorization failed");
+            : res.status(400).send("Invalid email or password");
         })
         .catch(err => {
           logServerErrorAndRespond(err, `Authentication error`, res);
