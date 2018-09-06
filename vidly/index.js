@@ -12,6 +12,7 @@ const customers = require("./routes/customers");
 const movies = require("./routes/movies");
 const rentals = require("./routes/rentals");
 const users = require("./routes/users");
+const auth = require("./routes/auth");
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
@@ -22,6 +23,7 @@ app.use("/api/customers", customers.router);
 app.use("/api/movies", movies.router);
 app.use("/api/rentals", rentals.router);
 app.use("/api/users", users.router);
+app.use("/api/auth", auth.router);
 
 function connectToDatabase() {
   mongoose
