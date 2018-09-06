@@ -3,6 +3,9 @@ const logger = require("./middleware/logger");
 const authentication = require("./middleware/authentication");
 const mongoose = require("mongoose");
 
+const Joi = require("joi");
+Joi.objectId = require("joi-objectid")(Joi);
+
 const app = express();
 const genres = require("./routes/genres");
 const customers = require("./routes/customers");
