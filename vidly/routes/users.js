@@ -3,6 +3,8 @@ const router = express.Router();
 const { User, validate } = require("../models/user");
 const _ = require("lodash");
 const bcrypt = require("bcrypt");
+const jwt = require("jsonwebtoken");
+const config = require("config");
 
 async function getUsers() {
   return await User.find().sort("title");
@@ -70,7 +72,13 @@ router.post("/", (req, res) => {
 
       createUser(req.body)
         .then(newUser => {
-          res.send(_.pick(newUser, ["_id", "name", "email"]));
+          const token = jwt.sign(
+            _.pick(newUser, ["_id"]),
+            config.get("jwtPrivateKey")
+          );
+          res
+            .header("x-auth-token", token)
+            .send(_.pick(newUser, ["_id", "name", "email"]));
         })
         .catch(err => {
           logServerErrorAndRespond(err, `Error trying to create user`, res);
