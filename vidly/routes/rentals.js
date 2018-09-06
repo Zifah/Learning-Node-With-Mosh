@@ -1,9 +1,13 @@
 const express = require("express");
 const router = express.Router();
+const mongoose = require("mongoose");
+const Fawn = require("fawn");
 const { Rental, validate } = require("../models/rental");
 const genres = require("./genres");
 const customers = require("./customers");
 const movies = require("./movies");
+
+Fawn.init(mongoose);
 
 async function getRentals() {
   return await Rental.find().sort("title");
@@ -47,7 +51,7 @@ async function createRental(rental) {
       return previousValue + currentValue;
     });
 
-  const newRental = await new Rental({
+  const rentalToSave = new Rental({
     movies: moviesToSave,
     customer: {
       _id: theCustomer._id,
@@ -56,13 +60,27 @@ async function createRental(rental) {
     days: rental.days,
     price: rental.days * dailyRentalPrice,
     dateDue: Date.now() + rental.days * 24 * 60 * 60 * 1000
-  }).save();
+  });
+
+  const task = new Fawn.Task();
+  task.save("rentals", rentalToSave);
 
   for (let i = 0; i < theMovies.length; i++) {
-    await theMovies[i].save();
+    var theMovie = theMovies[i];
+    task.update(
+      "movies",
+      { _id: theMovie._id },
+      {
+        $set: {
+          numberInStock: theMovie.numberInStock
+        }
+      }
+    );
   }
 
-  return newRental;
+  task.run();
+
+  return rentalToSave;
 }
 
 async function updateRental(id, updateObject) {
@@ -133,7 +151,7 @@ router.delete("/:id", (req, res) => {
 });
 
 function logServerErrorAndRespond(err, friendlyMessage, res, statusCode = 500) {
-  console.log(friendlyMessage, err.message);
+  console.log(friendlyMessage, err);
   res.status(statusCode).send(`${friendlyMessage}: ${err.message}`);
 }
 
