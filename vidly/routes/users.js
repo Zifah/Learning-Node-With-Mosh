@@ -2,13 +2,19 @@ const express = require("express");
 const router = express.Router();
 const { User, validate } = require("../models/user");
 const _ = require("lodash");
+const bcrypt = require("bcrypt");
 
 async function getUsers() {
   return await User.find().sort("title");
 }
 
 async function createUser(user) {
+  user.password = await bcrypt.hash(user.password, await bcrypt.genSalt(10));
   return await new User(_.pick(user, ["name", "email", "password"])).save();
+}
+
+async function authenticateUser(clear, hashed) {
+  return await bcrypt.compare(clear, hashed);
 }
 
 router.get("/", async (req, res) => {
