@@ -18,7 +18,7 @@ process.on("uncaughtException", ex => {
 });
 
 process.on("unhandledRejection", ex => {
-  winston.error(ex.message, ex);
+  throw ex;
 });
 
 if (!config.get("jwtPrivateKey")) {
