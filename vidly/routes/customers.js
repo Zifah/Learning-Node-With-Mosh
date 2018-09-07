@@ -1,7 +1,7 @@
 const express = require("express");
 const router = express.Router();
 const { Customer, validate } = require("../models/customer");
-const authentication = require("../middleware/authentication");
+const auth = require("../middleware/auth");
 
 async function getCustomers() {
   return await Customer.find().sort("name");
@@ -51,7 +51,7 @@ router.get("/:id", async (req, res) => {
   }
 });
 
-router.delete("/:id", authentication, (req, res) => {
+router.delete("/:id", auth, (req, res) => {
   Customer.findByIdAndRemove(req.params.id)
     .then(customer => {
       if (!customer)
@@ -74,7 +74,7 @@ function logServerErrorAndRespond(err, friendlyMessage, res, statusCode = 500) {
   res.status(statusCode).send(friendlyMessage);
 }
 
-router.put("/:id", authentication, (req, res) => {
+router.put("/:id", auth, (req, res) => {
   const { error } = validate(req.body);
   if (error) return res.status(400).send(error.details[0].message);
 
@@ -112,7 +112,7 @@ router.put("/:id", authentication, (req, res) => {
   console.log(`Customer ${req.params.id} updated successfully`);
 });
 
-router.post("/", authentication, (req, res) => {
+router.post("/", auth, (req, res) => {
   const { error } = validate(req.body);
   if (error) return res.status(400).send(error.details[0].message);
 

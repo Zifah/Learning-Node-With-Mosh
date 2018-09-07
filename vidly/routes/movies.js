@@ -2,7 +2,7 @@ const express = require("express");
 const router = express.Router();
 const { Movie, validate } = require("../models/movie");
 const genres = require("./genres");
-const authentication = require("../middleware/authentication");
+const auth = require("../middleware/auth");
 
 async function getMovies() {
   return await Movie.find().sort("title");
@@ -83,7 +83,7 @@ router.get("/:id", async (req, res) => {
   }
 });
 
-router.delete("/:id", authentication, (req, res) => {
+router.delete("/:id", auth, (req, res) => {
   Movie.findByIdAndRemove(req.params.id)
     .then(movie => {
       if (!movie)
@@ -106,7 +106,7 @@ function logServerErrorAndRespond(err, friendlyMessage, res, statusCode = 500) {
   res.status(statusCode).send(`${friendlyMessage}: ${err.message}`);
 }
 
-router.put("/:id", authentication, (req, res) => {
+router.put("/:id", auth, (req, res) => {
   const { error } = validate(req.body);
   if (error) return res.status(400).send(error.details[0].message);
 
@@ -144,7 +144,7 @@ router.put("/:id", authentication, (req, res) => {
   console.log(`Movie ${req.params.id} updated successfully`);
 });
 
-router.post("/", authentication, (req, res) => {
+router.post("/", auth, (req, res) => {
   const { error } = validate(req.body);
   if (error) return res.status(400).send(error.details[0].message);
 

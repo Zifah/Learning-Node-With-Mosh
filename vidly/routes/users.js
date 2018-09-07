@@ -3,7 +3,7 @@ const router = express.Router();
 const { User, validate } = require("../models/user");
 const _ = require("lodash");
 const bcrypt = require("bcrypt");
-const authentication = require("../middleware/authentication");
+const auth = require("../middleware/auth");
 
 async function getUsers() {
   return await User.find().sort("title");
@@ -26,24 +26,12 @@ router.get("/", async (req, res) => {
     );
 });
 
-router.get("/:id", async (req, res) => {
-  try {
-    const user = await User.findById(req.params.id);
-    if (!user)
-      return res
-        .status(404)
-        .send(`A user with id ${req.params.id} was not found!`);
-    res.send(user);
-  } catch (ex) {
-    logServerErrorAndRespond(
-      err,
-      `Error fetching user with id: ${req.params.id}`,
-      res
-    );
-  }
+router.get("/me", auth, async (req, res) => {
+  const user = await User.findById(req.user._id);
+  res.send(_.pick(user, ["_id", "name", "email"]));
 });
 
-router.delete("/:id", authentication, (req, res) => {
+router.delete("/:id", auth, (req, res) => {
   User.findByIdAndRemove(req.params.id)
     .then(user => {
       if (!user)
