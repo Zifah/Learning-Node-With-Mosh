@@ -4,6 +4,13 @@ const logger = require("./middleware/logger");
 const mongoose = require("mongoose");
 const config = require("config");
 const error = require("./middleware/error");
+const genres = require("./routes/genres");
+const customers = require("./routes/customers");
+const movies = require("./routes/movies");
+const rentals = require("./routes/rentals");
+const users = require("./routes/users");
+const auth = require("./routes/auth");
+const winston = require("winston");
 
 if (!config.get("jwtPrivateKey")) {
   console.error("FATAL ERROR: jwtPrivateKey is not defined");
@@ -13,13 +20,9 @@ if (!config.get("jwtPrivateKey")) {
 const Joi = require("joi");
 Joi.objectId = require("joi-objectid")(Joi);
 
+winston.add(winston.transports.File, { filename: "logfile.log" });
+
 const app = express();
-const genres = require("./routes/genres");
-const customers = require("./routes/customers");
-const movies = require("./routes/movies");
-const rentals = require("./routes/rentals");
-const users = require("./routes/users");
-const auth = require("./routes/auth");
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
