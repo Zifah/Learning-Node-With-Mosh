@@ -2,6 +2,7 @@ const express = require("express");
 const logger = require("./middleware/logger");
 const mongoose = require("mongoose");
 const config = require("config");
+const error = require("./middleware/error");
 
 if (!config.get("jwtPrivateKey")) {
   console.error("FATAL ERROR: jwtPrivateKey is not defined");
@@ -28,6 +29,8 @@ app.use("/api/movies", movies.router);
 app.use("/api/rentals", rentals.router);
 app.use("/api/users", users.router);
 app.use("/api/auth", auth.router);
+
+app.use(error);
 
 function connectToDatabase() {
   mongoose

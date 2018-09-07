@@ -6,7 +6,6 @@ const admin = require("../middleware/admin");
 
 async function getGenres() {
   return await Genres.find().sort("name");
-  l;
 }
 
 async function getGenreById(id) {
@@ -28,12 +27,10 @@ async function updateGenre(id, updateObject) {
   );
 }
 
-router.get("/", async (req, res) => {
+router.get("/", async (req, res, next) => {
   getGenres()
     .then(genres => res.send(genres))
-    .catch(err =>
-      logServerErrorAndRespond(err, `Could not get all genres`, res)
-    );
+    .catch(err => next(err));
 });
 
 router.get("/:id", async (req, res) => {
