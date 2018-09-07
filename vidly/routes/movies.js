@@ -2,6 +2,7 @@ const express = require("express");
 const router = express.Router();
 const { Movie, validate } = require("../models/movie");
 const genres = require("./genres");
+const authentication = require("../middleware/authentication");
 
 async function getMovies() {
   return await Movie.find().sort("title");
@@ -82,7 +83,7 @@ router.get("/:id", async (req, res) => {
   }
 });
 
-router.delete("/:id", (req, res) => {
+router.delete("/:id", authentication, (req, res) => {
   Movie.findByIdAndRemove(req.params.id)
     .then(movie => {
       if (!movie)
@@ -105,7 +106,7 @@ function logServerErrorAndRespond(err, friendlyMessage, res, statusCode = 500) {
   res.status(statusCode).send(`${friendlyMessage}: ${err.message}`);
 }
 
-router.put("/:id", (req, res) => {
+router.put("/:id", authentication, (req, res) => {
   const { error } = validate(req.body);
   if (error) return res.status(400).send(error.details[0].message);
 
@@ -143,7 +144,7 @@ router.put("/:id", (req, res) => {
   console.log(`Movie ${req.params.id} updated successfully`);
 });
 
-router.post("/", (req, res) => {
+router.post("/", authentication, (req, res) => {
   const { error } = validate(req.body);
   if (error) return res.status(400).send(error.details[0].message);
 

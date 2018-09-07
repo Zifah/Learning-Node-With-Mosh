@@ -3,6 +3,7 @@ const router = express.Router();
 const { User, validate } = require("../models/user");
 const _ = require("lodash");
 const bcrypt = require("bcrypt");
+const authentication = require("../middleware/authentication");
 
 async function getUsers() {
   return await User.find().sort("title");
@@ -42,7 +43,7 @@ router.get("/:id", async (req, res) => {
   }
 });
 
-router.delete("/:id", (req, res) => {
+router.delete("/:id", authentication, (req, res) => {
   User.findByIdAndRemove(req.params.id)
     .then(user => {
       if (!user)

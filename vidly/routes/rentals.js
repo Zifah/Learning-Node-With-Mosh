@@ -6,6 +6,7 @@ const { Rental, validate } = require("../models/rental");
 const genres = require("./genres");
 const customers = require("./customers");
 const movies = require("./movies");
+const authentication = require("../middleware/authentication");
 
 Fawn.init(mongoose);
 
@@ -108,7 +109,7 @@ router.get("/:id", async (req, res) => {
   }
 });
 
-router.delete("/:id", (req, res) => {
+router.delete("/:id", authentication, (req, res) => {
   Rental.findByIdAndRemove(req.params.id)
     .then(rental => {
       if (!rental)
@@ -126,7 +127,7 @@ router.delete("/:id", (req, res) => {
     });
 });
 
-router.post("/", (req, res) => {
+router.post("/", authentication, (req, res) => {
   const { error } = validate(req.body);
   if (error) return res.status(400).send(error.details[0].message);
 

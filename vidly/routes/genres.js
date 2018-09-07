@@ -52,7 +52,7 @@ router.get("/:id", async (req, res) => {
   }
 });
 
-router.delete("/:id", (req, res) => {
+router.delete("/:id", authentication, (req, res) => {
   Genres.findByIdAndRemove(req.params.id)
     .then(genre => {
       if (!genre)
@@ -75,7 +75,7 @@ function logServerErrorAndRespond(err, friendlyMessage, res, statusCode = 500) {
   res.status(statusCode).send(friendlyMessage);
 }
 
-router.put("/:id", (req, res) => {
+router.put("/:id", authentication, (req, res) => {
   const { error } = validate(req.body);
   if (error) return res.status(400).send(error.details[0].message);
 
