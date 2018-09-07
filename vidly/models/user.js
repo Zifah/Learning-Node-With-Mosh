@@ -1,30 +1,38 @@
 const Joi = require("joi");
 const mongoose = require("mongoose");
 const PasswordComplexity = require("joi-password-complexity");
+const jwt = require("jsonwebtoken");
+const config = require("config");
+const _ = require("lodash");
+
+const userSchema = new mongoose.Schema({
+  name: {
+    type: String,
+    required: true,
+    minlength: 3,
+    maxlength: 255,
+    trim: true
+  },
+  email: {
+    type: String,
+    required: true,
+    unique: true,
+    minlength: 3,
+    maxlength: 255
+  },
+  password: {
+    type: String,
+    required: true,
+    minlength: 6,
+    maxlength: 100
+  }
+});
+
+userSchema.methods.generateAuthToken = function() {
+  return jwt.sign(_.pick(this, ["_id"]), config.get("jwtPrivateKey"));
+};
 
 function getUsersModel() {
-  const userSchema = new mongoose.Schema({
-    name: {
-      type: String,
-      required: true,
-      minlength: 3,
-      maxlength: 255,
-      trim: true
-    },
-    email: {
-      type: String,
-      required: true,
-      unique: true,
-      minlength: 3,
-      maxlength: 255
-    },
-    password: {
-      type: String,
-      required: true,
-      minlength: 6,
-      maxlength: 100
-    }
-  });
   return mongoose.model("Users", userSchema);
 }
 
