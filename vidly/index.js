@@ -1,15 +1,7 @@
 require("express-async-errors");
 const express = require("express");
-const logger = require("./middleware/logger");
 const mongoose = require("mongoose");
 const config = require("config");
-const error = require("./middleware/error");
-const genres = require("./routes/genres");
-const customers = require("./routes/customers");
-const movies = require("./routes/movies");
-const rentals = require("./routes/rentals");
-const users = require("./routes/users");
-const auth = require("./routes/auth");
 const winston = require("winston");
 require("winston-mongodb");
 
@@ -35,21 +27,8 @@ winston.add(winston.transports.MongoDB, {
   level: "info"
 });
 
-Promise.reject(new Error("An unhandled rejection")).then();
-
 const app = express();
-app.use(express.json());
-app.use(express.urlencoded({ extended: true }));
-
-app.use(logger);
-app.use("/api/genres", genres.router);
-app.use("/api/customers", customers.router);
-app.use("/api/movies", movies.router);
-app.use("/api/rentals", rentals.router);
-app.use("/api/users", users.router);
-app.use("/api/auth", auth.router);
-
-app.use(error);
+require("./startup/routes")(app);
 
 function connectToDatabase() {
   mongoose
