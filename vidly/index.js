@@ -23,7 +23,7 @@ if (!config.get("jwtPrivateKey")) {
   process.exit(1);
 }
 
-require("./startup/database");
+require("./startup/database")();
 
 const Joi = require("joi");
 Joi.objectId = require("joi-objectid")(Joi);

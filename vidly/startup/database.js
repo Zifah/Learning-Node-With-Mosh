@@ -1,10 +1,8 @@
 const mongoose = require("mongoose");
+const winston = require("winston");
 
-function connectToDatabase() {
+module.exports = function connectToDatabase() {
   mongoose
     .connect("mongodb://localhost/vidly", { useNewUrlParser: true })
-    .then(() => console.log("Connected to MongoDB successfully..."))
-    .catch(err => console.log("MongDB connection error: ", err.message));
-}
-
-connectToDatabase();
+    .then(() => winston.info("Connected to MongoDB successfully..."));
+};
