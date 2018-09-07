@@ -1,6 +1,5 @@
 const express = require("express");
 const logger = require("./middleware/logger");
-const authentication = require("./middleware/authentication");
 const mongoose = require("mongoose");
 const config = require("config");
 
@@ -23,7 +22,6 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
 app.use(logger);
-app.use(authentication);
 app.use("/api/genres", genres.router);
 app.use("/api/customers", customers.router);
 app.use("/api/movies", movies.router);
