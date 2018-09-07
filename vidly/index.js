@@ -13,9 +13,9 @@ const auth = require("./routes/auth");
 const winston = require("winston");
 require("winston-mongodb");
 
-process.on("uncaughtException", ex => {
-  winston.error(ex.message, ex);
-});
+winston.handleExceptions(
+  new winston.transports.File({ filename: "uncaughtExceptions.log" })
+);
 
 process.on("unhandledRejection", ex => {
   throw ex;
@@ -34,6 +34,8 @@ winston.add(winston.transports.MongoDB, {
   db: "mongodb://localhost/vidly",
   level: "info"
 });
+
+Promise.reject(new Error("An unhandled rejection")).then();
 
 const app = express();
 app.use(express.json());
