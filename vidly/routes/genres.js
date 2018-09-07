@@ -3,6 +3,7 @@ const router = express.Router();
 const { Genres, validate } = require("../models/genre");
 const auth = require("../middleware/auth");
 const admin = require("../middleware/admin");
+const asyncMiddleware = require("../middleware/async");
 
 async function getGenres() {
   return await Genres.find().sort("name");
@@ -27,11 +28,13 @@ async function updateGenre(id, updateObject) {
   );
 }
 
-router.get("/", async (req, res, next) => {
-  getGenres()
-    .then(genres => res.send(genres))
-    .catch(err => next(err));
-});
+router.get(
+  "/",
+  asyncMiddleware(async (req, res) => {
+    const genres = await getGenres();
+    res.send(genres);
+  })
+);
 
 router.get("/:id", async (req, res) => {
   try {
