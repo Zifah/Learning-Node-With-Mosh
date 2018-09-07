@@ -6,7 +6,9 @@ const bcrypt = require("bcrypt");
 const auth = require("../middleware/auth");
 
 async function getUsers() {
-  return await User.find().sort("title");
+  return await User.find()
+    .select(["_id", "name", "email"])
+    .sort("title");
 }
 
 async function createUser(user) {
