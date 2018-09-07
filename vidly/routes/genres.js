@@ -28,7 +28,6 @@ async function updateGenre(id, updateObject) {
 }
 
 router.get("/", async (req, res) => {
-  throw new Error("Could not get the genres!");
   const genres = await getGenres();
   res.send(genres);
 });

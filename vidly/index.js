@@ -17,6 +17,10 @@ process.on("uncaughtException", ex => {
   winston.error(ex.message, ex);
 });
 
+process.on("unhandledRejection", ex => {
+  winston.error(ex.message, ex);
+});
+
 if (!config.get("jwtPrivateKey")) {
   console.error("FATAL ERROR: jwtPrivateKey is not defined");
   process.exit(1);
@@ -30,8 +34,6 @@ winston.add(winston.transports.MongoDB, {
   db: "mongodb://localhost/vidly",
   level: "info"
 });
-
-throw new Error("Something failed during start-up!!!");
 
 const app = express();
 app.use(express.json());
