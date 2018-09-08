@@ -51,7 +51,7 @@ describe("registerUser", () => {
     });
   });
 
-  it("should return user with the given username and id populated", () => {
+  it("should return user object if username is valid", () => {
     const username = "hoadewuyi";
     const result = lib.registerUser(username);
     expect(result.id).toBeTruthy();

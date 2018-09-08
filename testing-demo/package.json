@@ -11,7 +11,7 @@
     "jest": "^23.5.0"
   },
   "scripts": {
-    "test": "jest"
+    "test": "jest --watchAll"
   },
   "keywords": [],
   "author": "",
