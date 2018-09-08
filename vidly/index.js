@@ -5,7 +5,8 @@ require("./startup/database")();
 
 const app = express();
 require("./startup/routes")(app);
-require("./startup/validation");
+require("./startup/validation")();
+const winston = require("winston");
 
 const port = process.env.PORT_NUMBER || 3000;
-app.listen(port, () => console.log("Listening on port", port, "..."));
+app.listen(port, () => winston.info("Listening on port", port, "..."));
