@@ -40,3 +40,21 @@ describe("getProduct", () => {
     expect(result).toHaveProperty("id", 1);
   });
 });
+
+describe("registerUser", () => {
+  it("should throw an exception if input username is falsy", () => {
+    const args = [null, undefined, "", false, 0, NaN];
+    args.forEach(a => {
+      expect(() => {
+        lib.registerUser(a);
+      }).toThrowError();
+    });
+  });
+
+  it("should return user with the given username and id populated", () => {
+    const username = "hoadewuyi";
+    const result = lib.registerUser(username);
+    expect(result.id).toBeTruthy();
+    expect(result).toHaveProperty("username", username);
+  });
+});
