@@ -16,3 +16,11 @@ describe("absolute", () => {
     expect(result).toBe(0);
   });
 });
+
+describe("greet", () => {
+  it("should return the greeting message", () => {
+    const name = "Hafiz";
+    const result = lib.greet(name);
+    expect(result).toContain(name);
+  });
+});
