@@ -21,6 +21,7 @@ describe("greet", () => {
   it("should return the greeting message", () => {
     const name = "Hafiz";
     const result = lib.greet(name);
-    expect(result).toContain(name);
+    const regExp = new RegExp(name);
+    expect(result).toMatch(regExp);
   });
 });
