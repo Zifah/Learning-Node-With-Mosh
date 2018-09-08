@@ -1,12 +1,8 @@
 const express = require("express");
-const config = require("config");
 const logging = require("./startup/logging")();
+const config = require("./startup/config")();
 const Joi = require("joi");
 Joi.objectId = require("joi-objectid")(Joi);
-
-if (!config.get("jwtPrivateKey")) {
-  throw new Error("FATAL ERROR: jwtPrivateKey is not defined");
-}
 
 require("./startup/database")();
 
