@@ -32,3 +32,11 @@ describe("getCurrencies", () => {
     expect(result).toEqual(expect.arrayContaining(["EUR", "AUD", "USD"]));
   });
 });
+
+describe("getProduct", () => {
+  it("should return product with the given id", () => {
+    const result = lib.getProduct(1);
+    expect(result).toMatchObject({ id: 1, price: 10 });
+    expect(result).toHaveProperty("id", 1);
+  });
+});
