@@ -3,8 +3,11 @@
   "version": "1.0.0",
   "description": "",
   "main": "index.js",
+  "directories": {
+    "test": "tests"
+  },
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "jest"
   },
   "keywords": [],
   "author": "",
@@ -23,5 +26,8 @@
     "mongoose": "^5.2.12",
     "winston": "^2.4.0",
     "winston-mongodb": "^3.0.0"
+  },
+  "devDependencies": {
+    "jest": "^23.5.0"
   }
 }
