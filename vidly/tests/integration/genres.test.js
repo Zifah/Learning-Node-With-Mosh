@@ -71,5 +71,18 @@ describe("/api/genres", () => {
         .send({ name: new Array(52).join("1") });
       expect(res.status).toBe(400);
     });
+
+    it("should create a genre and return it for a valid input", async () => {
+      const token = new User().generateAuthToken();
+      const res = await request(server)
+        .post(`/api/genres`)
+        .set("x-auth-token", token)
+        .send({ name: "genre1" });
+      expect(res.status).toBe(200);
+      expect(res.body).toHaveProperty("name", "genre1");
+
+      const savedGenre = await Genres.find({ name: "genre1 " });
+      expect(savedGenre).not.toBeNull();
+    });
   });
 });
