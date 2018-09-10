@@ -7,7 +7,7 @@
     "test": "tests"
   },
   "scripts": {
-    "test": "jest"
+    "test": "jest --verbose"
   },
   "keywords": [],
   "author": "",
