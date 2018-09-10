@@ -3,6 +3,7 @@ const router = express.Router();
 const { Genres, validate } = require("../models/genre");
 const auth = require("../middleware/auth");
 const admin = require("../middleware/admin");
+const mongoose = require("mongoose");
 
 async function getGenres() {
   return await Genres.find().sort("name");
@@ -33,6 +34,9 @@ router.get("/", async (req, res) => {
 });
 
 router.get("/:id", async (req, res) => {
+  if (!mongoose.Types.ObjectId.isValid(req.params.id))
+    return res.status(404).send("Invalid ID.");
+
   const genre = await Genres.findById(req.params.id);
   if (!genre)
     return res
@@ -49,11 +53,6 @@ router.delete("/:id", [auth, admin], async (req, res) => {
       .send(`A genre with id ${req.params.id} was not found!`);
   res.send(genre);
 });
-
-function logServerErrorAndRespond(err, friendlyMessage, res, statusCode = 500) {
-  console.log(friendlyMessage, err.message);
-  res.status(statusCode).send(friendlyMessage);
-}
 
 router.put("/:id", auth, async (req, res) => {
   const { error } = validate(req.body);
