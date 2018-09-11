@@ -8,9 +8,14 @@ describe("/api/genres", () => {
   beforeEach(() => {
     server = require("../../index");
   });
+
   afterEach(async () => {
+    await Genres.deleteMany({});
     server.close();
-    await Genres.remove({});
+  });
+
+  afterAll(() => {
+    mongoose.connection.close();
   });
 
   describe("GET /", () => {
@@ -49,8 +54,8 @@ describe("/api/genres", () => {
   describe("POST /", () => {
     let token;
     let name;
-    const exec = async () => {
-      return await request(server)
+    const exec = () => {
+      return request(server)
         .post(`/api/genres`)
         .set("x-auth-token", token)
         .send({ name });
