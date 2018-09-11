@@ -4,7 +4,7 @@ const { User } = require("../../models/user");
 const { Genres } = require("../../models/genre");
 const mongoose = require("mongoose");
 
-describe("auth middleware", async () => {
+describe("auth middleware", () => {
   beforeEach(() => {
     server = require("../../index");
     token = new User().generateAuthToken();
