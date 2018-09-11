@@ -45,8 +45,15 @@ describe("/api/genres", () => {
       expect(res.body).toHaveProperty("name", "genre1");
     });
 
-    it("should return error 404 for an invalid id", async () => {
+    it("should return error 404 for an invalid object id", async () => {
       const res = await request(server).get(`/api/genres/1`);
+      expect(res.status).toBe(404);
+    });
+
+    it("should return error 404 for an object id which does not match any genre", async () => {
+      const res = await request(server).get(
+        `/api/genres/${new mongoose.Types.ObjectId()}`
+      );
       expect(res.status).toBe(404);
     });
   });
