@@ -7,7 +7,7 @@
     "test": "tests"
   },
   "scripts": {
-    "test": "jest --verbose"
+    "test": "jest --verbose --runInBand --forceExit"
   },
   "keywords": [],
   "author": "",
