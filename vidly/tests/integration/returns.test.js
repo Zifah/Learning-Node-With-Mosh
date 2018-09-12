@@ -45,12 +45,26 @@ describe("/api/returns", () => {
       .send({ customerId: customerId, rentalId: rental._id });
     expect(res.status).toBe(401);
   });
+
+  it("should return 400 if customerId is not provided", async () => {
+    const res = await request(server)
+      .post("/api/returns")
+      .send({ rentalId: rental._id });
+    expect(res.status).toBe(400);
+    expect(res.text).toContain("required");
+  });
+
+  it("should return 400 if rentalId is not provided", async () => {
+    const res = await request(server)
+      .post("/api/returns")
+      .send({ customerId: customerId });
+    expect(res.status).toBe(400);
+    expect(res.text).toContain("required");
+  });
 });
 
 // POST /api/returns (customerId, rentalId)
 
-// Return 400 if customerId is not provided
-// Return 400 if rentalId is not provided
 // Return 404 if customerId is not valid
 // Return 404 if rentalId is not valid
 // Return 400 if rental has already been returned
