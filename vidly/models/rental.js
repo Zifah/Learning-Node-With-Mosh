@@ -1,6 +1,5 @@
 const Joi = require("joi");
 const mongoose = require("mongoose");
-const { movieSchema } = require("./movie");
 const { customerSchema } = require("./customer");
 
 function getRentalsModel() {
@@ -22,6 +21,9 @@ function getRentalsModel() {
     price: {
       type: Number,
       required: true
+    },
+    extraPayment: {
+      type: Number
     },
     days: {
       type: Number,
