@@ -100,4 +100,43 @@ describe("/api/genres", () => {
       expect(savedGenre).not.toBeNull();
     });
   });
+
+  describe("DELETE /", () => {
+    let token;
+    let objectId = "";
+
+    beforeEach(() => {
+      token = new User({ isAdmin: true }).generateAuthToken();
+    });
+
+    const exec = () => {
+      return request(server)
+        .delete(`/api/genres/${objectId}`)
+        .set("x-auth-token", token);
+    };
+
+    it("should return 404 error if we supply an invalid object id parameter", async () => {
+      objectId = "a";
+      const res = await exec();
+      expect(res.status).toBe(404);
+    });
+
+    it("should return 404 error if we supply a valid objectId that does not belong to any existing genre", async () => {
+      objectId = new mongoose.Types.ObjectId();
+      const res = await exec();
+      expect(res.status).toBe(404);
+    });
+
+    it("should return the deleted genre if the delete was successful", async () => {
+      objectId = new mongoose.Types.ObjectId();
+      const schema = {
+        _id: objectId.toHexString(),
+        name: "genre1"
+      };
+      const genre = await new Genres(schema).save();
+      const res = await exec();
+      expect(res.status).toBe(200);
+      expect(res.body).toMatchObject(schema);
+    });
+  });
 });

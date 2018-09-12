@@ -35,7 +35,7 @@ router.get("/", async (req, res) => {
 });
 
 router.get("/:id", validateObjectId, async (req, res) => {
-  const genre = await Genres.findById(req.params.id);
+  const genre = await getGenreById(req.params.id);
   if (!genre)
     return res
       .status(404)
@@ -43,7 +43,7 @@ router.get("/:id", validateObjectId, async (req, res) => {
   res.send(genre);
 });
 
-router.delete("/:id", [auth, admin], async (req, res) => {
+router.delete("/:id", [auth, admin, validateObjectId], async (req, res) => {
   const genre = await Genres.findByIdAndRemove(req.params.id);
   if (!genre)
     return res
