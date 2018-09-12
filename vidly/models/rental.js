@@ -44,6 +44,19 @@ function getRentalsModel() {
     }
   });
 
+  rentalSchema.pre("validate", function(next) {
+    var self = this;
+    const dailyRentalPrice = self.movies
+      .map(x => x.dailyRentalRate)
+      .reduce((previousValue, currentValue) => {
+        return previousValue + currentValue;
+      });
+
+    (self.price = self.days * dailyRentalPrice),
+      (self.dateDue = Date.now() + self.days * 24 * 60 * 60 * 1000);
+    next();
+  });
+
   return mongoose.model("Rentals", rentalSchema);
 }
 

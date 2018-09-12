@@ -46,25 +46,17 @@ async function createRental(rental) {
     theMatch.numberInStock = theMatch.numberInStock - 1;
   }
 
-  const dailyRentalPrice = moviesToSave
-    .map(x => x.dailyRentalRate)
-    .reduce((previousValue, currentValue) => {
-      return previousValue + currentValue;
-    });
-
   const rentalToSave = new Rental({
     movies: moviesToSave,
     customer: {
       _id: theCustomer._id,
       name: theCustomer.name
     },
-    days: rental.days,
-    price: rental.days * dailyRentalPrice,
-    dateDue: Date.now() + rental.days * 24 * 60 * 60 * 1000
+    days: rental.days
   });
 
   const task = new Fawn.Task();
-  task.save("rentals", rentalToSave);
+  task.save(rentalToSave);
 
   for (let i = 0; i < theMovies.length; i++) {
     var theMovie = theMovies[i];
@@ -79,9 +71,8 @@ async function createRental(rental) {
     );
   }
 
-  task.run();
-
-  return rentalToSave;
+  const results = await task.run({ useMongoose: true });
+  return results[0];
 }
 
 router.get("/", async (req, res) => {
