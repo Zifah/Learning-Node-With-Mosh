@@ -49,7 +49,6 @@ describe("/api/returns", () => {
 
 // POST /api/returns (customerId, rentalId)
 
-// Return 401 if client is not logged in
 // Return 400 if customerId is not provided
 // Return 400 if rentalId is not provided
 // Return 404 if customerId is not valid
