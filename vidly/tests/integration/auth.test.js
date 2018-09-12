@@ -15,9 +15,7 @@ describe("auth middleware", () => {
     server.close();
   });
 
-  afterAll(() => {
-    mongoose.connection.close();
-  });
+  afterAll(() => {});
 
   let token;
 

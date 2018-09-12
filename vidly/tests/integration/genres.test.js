@@ -11,12 +11,10 @@ describe("/api/genres", () => {
 
   afterEach(async () => {
     await Genres.deleteMany({});
-    server.close();
+    await server.close();
   });
 
-  afterAll(() => {
-    mongoose.connection.close();
-  });
+  afterAll(async () => {});
 
   describe("GET /", () => {
     it("should return all genres", async () => {
