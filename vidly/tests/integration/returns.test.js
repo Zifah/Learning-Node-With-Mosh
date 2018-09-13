@@ -1,4 +1,5 @@
 const { Rental } = require("../../models/rental");
+const { User } = require("../../models/user");
 const mongoose = require("mongoose");
 const request = require("supertest");
 
@@ -47,9 +48,11 @@ describe("/api/returns", () => {
   });
 
   it("should return 400 if customerId is not provided", async () => {
+    const token = User().generateAuthToken();
     const res = await request(server)
       .post("/api/returns")
-      .send({ rentalId: rental._id });
+      .send({ rentalId: rental._id })
+      .set("x-auth-token", `${token}`);
     expect(res.status).toBe(400);
     expect(res.text).toContain("required");
   });
