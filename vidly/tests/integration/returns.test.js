@@ -90,9 +90,13 @@ describe("/api/returns", () => {
 
   it("should return 200 if valid request", async () => {
     const res = await exec();
-    const returnedRental = await Rental.findById(rentalId);
     expect(res.status).toBe(200);
-    expect(returnedRental.dateReturned).toBeTruthy();
+  });
+
+  it("should set the return date if valid request", async () => {
+    const res = await exec();
+    const returnedRental = await Rental.findById(rentalId);
+    expect(Date.now() - returnedRental.dateReturned).toBeLessThan(10 * 1000);
   });
 });
 
