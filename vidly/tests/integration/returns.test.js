@@ -68,12 +68,24 @@ describe("/api/returns", () => {
     expect(res.status).toBe(400);
     expect(res.text).toContain("required");
   });
+
+  it("should return 404 if rentalId/customerId combination is not valid", async () => {
+    const rental = await Rental.findOne({
+      _id: rentalId,
+      "customer._id": customerId
+    });
+
+    await Rental.deleteMany({});
+    const res = await exec();
+    expect(rental).not.toBeNull();
+    expect(res.status).toBe(404);
+  });
 });
 
 // POST /api/returns (customerId, rentalId)
 
 // Return 404 if customerId is not valid
-// Return 404 if rentalId is not valid
+// Return 404 if rentalId/customerId combination does not match an existing rental
 // Return 400 if rental has already been returned
 // Return 200 if valid request
 // Set the return date
