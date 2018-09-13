@@ -70,15 +70,22 @@ describe("/api/returns", () => {
   });
 
   it("should return 404 if rentalId/customerId combination is not valid", async () => {
-    const rental = await Rental.findOne({
+    const fetchedRental = await Rental.findOne({
       _id: rentalId,
       "customer._id": customerId
     });
 
     await Rental.deleteMany({});
     const res = await exec();
-    expect(rental).not.toBeNull();
+    expect(fetchedRental).not.toBeNull();
     expect(res.status).toBe(404);
+  });
+
+  it("should return 400 if rental has already been returned", async () => {
+    rental.dateReturned = Date.now();
+    await rental.save();
+    const res = await exec();
+    expect(res.status).toBe(400);
   });
 });
 
