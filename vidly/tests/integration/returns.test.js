@@ -90,13 +90,14 @@ describe("/api/returns", () => {
 
   it("should return 200 if valid request", async () => {
     const res = await exec();
+    const returnedRental = await Rental.findById(rentalId);
     expect(res.status).toBe(200);
+    expect(returnedRental.dateReturned).toBeTruthy();
   });
 });
 
 // POST /api/returns (customerId, rentalId)
 
-// Return 200 if valid request
 // Set the return date
 // Calculate the rental fee
 // Increase the stock
