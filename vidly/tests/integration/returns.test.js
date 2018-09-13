@@ -87,13 +87,15 @@ describe("/api/returns", () => {
     const res = await exec();
     expect(res.status).toBe(400);
   });
+
+  it("should return 200 if valid request", async () => {
+    const res = await exec();
+    expect(res.status).toBe(200);
+  });
 });
 
 // POST /api/returns (customerId, rentalId)
 
-// Return 404 if customerId is not valid
-// Return 404 if rentalId/customerId combination does not match an existing rental
-// Return 400 if rental has already been returned
 // Return 200 if valid request
 // Set the return date
 // Calculate the rental fee

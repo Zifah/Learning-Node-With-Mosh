@@ -2,8 +2,9 @@ const router = require("express").Router();
 const auth = require("../middleware/auth");
 const mongoose = require("mongoose");
 const { Rental } = require("../models/rental");
+const jwt = require("jsonwebtoken");
 
-router.post("/", async (req, res) => {
+router.post("/", [auth], async (req, res) => {
   const customerId = req.body.customerId;
   const rentalId = req.body.rentalId;
 
@@ -20,7 +21,7 @@ router.post("/", async (req, res) => {
   if (rental.dateReturned)
     return res.status(400).send("Rental has been returned already");
 
-  res.status(401).send("Unauthorized");
+  res.status(200).send("The rental was found");
 });
 
 module.exports = {
