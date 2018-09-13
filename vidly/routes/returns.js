@@ -17,6 +17,9 @@ router.post("/", async (req, res) => {
 
   if (!rental) return res.status(404).send("No matching rental was found");
 
+  if (rental.dateReturned)
+    return res.status(400).send("Rental has been returned already");
+
   res.status(401).send("Unauthorized");
 });
 
