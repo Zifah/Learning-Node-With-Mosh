@@ -46,6 +46,7 @@ function getRentalsModel() {
 
   rentalSchema.pre("validate", function(next) {
     var self = this;
+    if (this.dateDue || this.price) return next(); // set these fields only on initial save
     const dailyRentalPrice = self.movies
       .map(x => x.dailyRentalRate)
       .reduce((previousValue, currentValue) => {

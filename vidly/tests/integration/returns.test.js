@@ -5,7 +5,7 @@ const request = require("supertest");
 
 describe("/api/returns", () => {
   let server, token;
-  let rental, customerId, movie1Id, movie2Id, rentalId;
+  let rental, customerId, movie1Id, movie2Id, rentalId, days;
 
   const exec = () => {
     return request(server)
@@ -20,6 +20,7 @@ describe("/api/returns", () => {
     customerId = new mongoose.Types.ObjectId();
     movie1Id = new mongoose.Types.ObjectId();
     movie2Id = new mongoose.Types.ObjectId();
+    days = 3;
     rental = new Rental({
       customer: {
         _id: customerId,
@@ -38,7 +39,7 @@ describe("/api/returns", () => {
           dailyRentalRate: 3
         }
       ],
-      days: 3
+      days: days
     });
     await rental.save();
     rentalId = rental._id;
@@ -98,11 +99,21 @@ describe("/api/returns", () => {
     const returnedRental = await Rental.findById(rentalId);
     expect(Date.now() - returnedRental.dateReturned).toBeLessThan(10 * 1000);
   });
+
+  it("should set the extra payment amount if item is returned late", async () => {
+    const daysOverdue = 2;
+    rental.dateDue = Date.now() - daysOverdue * 24 * 60 * 60 * 1000;
+    await rental.save();
+    const res = await exec();
+    const returnedRental = await Rental.findById(rentalId);
+    expect(returnedRental.extraPayment).toEqual(
+      (rental.price / days) * daysOverdue
+    );
+  });
 });
 
 // POST /api/returns (customerId, rentalId)
 
-// Set the return date
 // Calculate the rental fee
 // Increase the stock
 // Return the rental
