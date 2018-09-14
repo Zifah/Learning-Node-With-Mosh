@@ -106,7 +106,7 @@ describe("/api/returns", () => {
     await rental.save();
     const res = await exec();
     const returnedRental = await Rental.findById(rentalId);
-    expect(returnedRental.extraPayment).toEqual(
+    expect(returnedRental.extraPayment).toBeCloseTo(
       (rental.price / days) * daysOverdue
     );
   });

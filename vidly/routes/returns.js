@@ -22,6 +22,10 @@ router.post("/", [auth], async (req, res) => {
     return res.status(400).send("Rental has been returned already");
 
   rental.dateReturned = Date.now();
+
+  const extraDays =
+    (rental.dateReturned - rental.dateDue) / (1 * 24 * 60 * 60 * 1000);
+  rental.extraPayment = extraDays * (rental.price / rental.days);
   await rental.save();
   res.status(200).send("The rental has been returned successfully");
 });
