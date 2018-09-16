@@ -51,6 +51,13 @@ function getRentalsModel() {
     });
   };
 
+  rentalSchema.methods.return = function() {
+    this.dateReturned = Date.now();
+    const extraDays =
+      (this.dateReturned - this.dateDue) / (1 * 24 * 60 * 60 * 1000);
+    this.extraPayment = extraDays * (this.price / this.days);
+  };
+
   rentalSchema.pre("validate", function(next) {
     var self = this;
     if (this.dateDue || this.price) return next(); // set these fields only on initial save

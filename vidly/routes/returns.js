@@ -20,11 +20,7 @@ router.post("/", [auth, validate(validateReturn)], async (req, res) => {
   if (rental.dateReturned)
     return res.status(400).send("Rental has been returned already");
 
-  rental.dateReturned = Date.now();
-
-  const extraDays =
-    (rental.dateReturned - rental.dateDue) / (1 * 24 * 60 * 60 * 1000);
-  rental.extraPayment = extraDays * (rental.price / rental.days);
+  rental.return();
   await rental.save();
 
   const uniqueMovieIds = _.uniq(rental.movies.map(m => m._id));
@@ -44,7 +40,7 @@ router.post("/", [auth, validate(validateReturn)], async (req, res) => {
     );
   }
 
-  res.status(200).send(rental);
+  res.send(rental);
 });
 
 function validateReturn(req) {
