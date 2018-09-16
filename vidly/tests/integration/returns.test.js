@@ -1,5 +1,6 @@
 const { Rental } = require("../../models/rental");
 const { User } = require("../../models/user");
+const { Movie } = require("../../models/movie");
 const mongoose = require("mongoose");
 const request = require("supertest");
 
@@ -18,27 +19,36 @@ describe("/api/returns", () => {
     server = require("../../index");
     token = User().generateAuthToken();
     customerId = new mongoose.Types.ObjectId();
-    movie1Id = new mongoose.Types.ObjectId();
-    movie2Id = new mongoose.Types.ObjectId();
     days = 3;
+
+    const movie1 = await new Movie({
+      title: "movie 1 title",
+      dailyRentalRate: 2,
+      numberInStock: 0,
+      genre: {
+        name: "Genre 1"
+      }
+    }).save();
+
+    const movie2 = await new Movie({
+      title: "movie 2 title",
+      dailyRentalRate: 3,
+      numberInStock: 0,
+      genre: {
+        name: "Genre 1"
+      }
+    }).save();
+
+    movie1Id = movie1._id;
+    movie2Id = movie2._id;
+
     rental = new Rental({
       customer: {
         _id: customerId,
         name: "12345",
         phone: "123456789"
       },
-      movies: [
-        {
-          _id: movie1Id,
-          title: "movie 1 title",
-          dailyRentalRate: 2
-        },
-        {
-          _id: movie2Id,
-          title: "movie 2 title",
-          dailyRentalRate: 3
-        }
-      ],
+      movies: [movie1, movie1, movie2],
       days: days
     });
     await rental.save();
@@ -95,7 +105,7 @@ describe("/api/returns", () => {
   });
 
   it("should set the return date if valid request", async () => {
-    const res = await exec();
+    await exec();
     const returnedRental = await Rental.findById(rentalId);
     expect(Date.now() - returnedRental.dateReturned).toBeLessThan(10 * 1000);
   });
@@ -104,16 +114,29 @@ describe("/api/returns", () => {
     const daysOverdue = 2;
     rental.dateDue = Date.now() - daysOverdue * 24 * 60 * 60 * 1000;
     await rental.save();
-    const res = await exec();
+    await exec();
     const returnedRental = await Rental.findById(rentalId);
     expect(returnedRental.extraPayment).toBeCloseTo(
       (rental.price / days) * daysOverdue
     );
   });
+
+  it("should increase the stock for each movie in the rental", async () => {
+    let movie1 = await Movie.findById(movie1Id);
+    let movie2 = await Movie.findById(movie2Id);
+
+    expect(movie1.numberInStock).toBe(0);
+    expect(movie2.numberInStock).toBe(0);
+
+    await exec();
+    movie1 = await Movie.findById(movie1Id);
+    movie2 = await Movie.findById(movie2Id);
+
+    expect(movie1.numberInStock).toBe(2);
+    expect(movie2.numberInStock).toBe(1);
+  });
 });
 
 // POST /api/returns (customerId, rentalId)
-
-// Calculate the rental fee
 // Increase the stock
 // Return the rental

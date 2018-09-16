@@ -2,7 +2,9 @@ const router = require("express").Router();
 const auth = require("../middleware/auth");
 const mongoose = require("mongoose");
 const { Rental } = require("../models/rental");
+const { Movie } = require("../models/movie");
 const jwt = require("jsonwebtoken");
+const _ = require("lodash");
 
 router.post("/", [auth], async (req, res) => {
   const customerId = req.body.customerId;
@@ -27,6 +29,24 @@ router.post("/", [auth], async (req, res) => {
     (rental.dateReturned - rental.dateDue) / (1 * 24 * 60 * 60 * 1000);
   rental.extraPayment = extraDays * (rental.price / rental.days);
   await rental.save();
+
+  const uniqueMovieIds = _.uniq(rental.movies.map(m => m._id));
+
+  for (let i = 0; i < uniqueMovieIds.length; i++) {
+    const numberRented = rental.movies.reduce(
+      (prev, curr) => (curr._id === uniqueMovieIds[i] ? ++prev : prev),
+      0
+    );
+    await Movie.updateOne(
+      { _id: uniqueMovieIds[i] },
+      {
+        $inc: {
+          numberInStock: numberRented
+        }
+      }
+    );
+  }
+
   res.status(200).send("The rental has been returned successfully");
 });
 
