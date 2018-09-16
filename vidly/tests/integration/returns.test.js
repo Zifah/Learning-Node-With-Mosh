@@ -136,8 +136,11 @@ describe("/api/returns", () => {
     expect(movie1.numberInStock).toBe(2);
     expect(movie2.numberInStock).toBe(1);
   });
+
+  it("should return the rental", async () => {
+    const res = await exec();
+    expect(res.body._id).toBe(`${rentalId}`);
+  });
 });
 
-// POST /api/returns (customerId, rentalId)
-// Increase the stock
 // Return the rental

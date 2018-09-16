@@ -47,7 +47,7 @@ router.post("/", [auth], async (req, res) => {
     );
   }
 
-  res.status(200).send("The rental has been returned successfully");
+  res.status(200).send(rental);
 });
 
 module.exports = {
