@@ -71,14 +71,12 @@ describe("/api/returns", () => {
     customerId = "";
     const res = await exec();
     expect(res.status).toBe(400);
-    expect(res.text).toContain("required");
   });
 
   it("should return 400 if rentalId is not provided", async () => {
     rentalId = "";
     const res = await exec();
     expect(res.status).toBe(400);
-    expect(res.text).toContain("required");
   });
 
   it("should return 404 if rentalId/customerId combination is not valid", async () => {

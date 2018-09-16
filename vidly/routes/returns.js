@@ -1,17 +1,14 @@
 const router = require("express").Router();
 const auth = require("../middleware/auth");
-const mongoose = require("mongoose");
 const { Rental } = require("../models/rental");
 const { Movie } = require("../models/movie");
-const jwt = require("jsonwebtoken");
 const _ = require("lodash");
+const Joi = require("joi");
+const validate = require("../middleware/validate");
 
-router.post("/", [auth], async (req, res) => {
+router.post("/", [auth, validate(validateReturn)], async (req, res) => {
   const customerId = req.body.customerId;
   const rentalId = req.body.rentalId;
-
-  if (!customerId) return res.status(400).send("CustomerId is required");
-  if (!rentalId) return res.status(400).send("RentalId is required");
 
   const rental = await Rental.findOne({
     _id: rentalId,
@@ -49,6 +46,15 @@ router.post("/", [auth], async (req, res) => {
 
   res.status(200).send(rental);
 });
+
+function validateReturn(req) {
+  const schema = {
+    customerId: Joi.objectId().required(),
+    rentalId: Joi.objectId().required()
+  };
+
+  return Joi.validate(req, schema);
+}
 
 module.exports = {
   router: router
