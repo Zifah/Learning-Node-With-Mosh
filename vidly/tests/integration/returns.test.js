@@ -80,10 +80,7 @@ describe("/api/returns", () => {
   });
 
   it("should return 404 if rentalId/customerId combination is not valid", async () => {
-    const fetchedRental = await Rental.findOne({
-      _id: rentalId,
-      "customer._id": customerId
-    });
+    const fetchedRental = await Rental.lookup(customerId, rentalId);
 
     await Rental.deleteMany({});
     const res = await exec();

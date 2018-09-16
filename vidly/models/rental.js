@@ -44,6 +44,13 @@ function getRentalsModel() {
     }
   });
 
+  rentalSchema.statics.lookup = function(customerId, rentalId) {
+    return this.findOne({
+      _id: rentalId,
+      "customer._id": customerId
+    });
+  };
+
   rentalSchema.pre("validate", function(next) {
     var self = this;
     if (this.dateDue || this.price) return next(); // set these fields only on initial save
