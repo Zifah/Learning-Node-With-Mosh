@@ -14,10 +14,12 @@
   "license": "ISC",
   "dependencies": {
     "bcrypt": "^3.0.0",
+    "compression": "^1.7.3",
     "config": "^2.0.1",
     "express": "^4.16.3",
     "express-async-errors": "^3.0.0",
     "fawn": "^2.1.5",
+    "helmet": "^3.13.0",
     "joi": "^13.6.0",
     "joi-objectid": "^2.0.0",
     "joi-password-complexity": "^2.0.1",

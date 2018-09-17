@@ -6,6 +6,8 @@ require("./startup/database")();
 const app = express();
 require("./startup/routes")(app);
 require("./startup/validation")();
+require("./startup/prod")(app);
+
 const winston = require("winston");
 
 const port = process.env.PORT_NUMBER || 3000;
