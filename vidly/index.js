@@ -10,7 +10,7 @@ require("./startup/prod")(app);
 
 const winston = require("winston");
 
-const port = process.env.PORT_NUMBER || 3000;
+const port = process.env.PORT || 3000;
 const server = app.listen(port, () =>
   winston.info("Listening on port", port, "...")
 );
