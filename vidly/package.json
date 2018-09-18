@@ -7,7 +7,11 @@
     "test": "tests"
   },
   "scripts": {
-    "test": "jest --verbose --runInBand --forceExit --coverage"
+    "test": "jest --verbose --runInBand --forceExit --coverage",
+    "start": "node index.js"
+  },
+  "engines": {
+    "node": "8.11.3"
   },
   "keywords": [],
   "author": "",
